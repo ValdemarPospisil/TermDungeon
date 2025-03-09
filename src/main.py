@@ -4,7 +4,7 @@ from bsp_generator import generate_bsp_dungeon
 from cellular_automata import generate_cellular_automata_dungeon
 from drunkards_walk import generate_drunkards_dungeon
 from wave_function_collapse import generate_wfc_dungeon
-#from perlin_noise import generate_perlin_dungeon
+from perlin_noise import generate_perlin_dungeon
 
 # Slovník s vysvětlením algoritmů
 ALGO_INFO = {
