@@ -1,2 +1,2 @@
 # TermRogue
-Rogue-like game playable in terminal
+Terminal dungeon generator made in python
