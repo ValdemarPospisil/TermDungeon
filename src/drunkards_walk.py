@@ -2,15 +2,17 @@ import random
 
 def generate_drunkards_dungeon(width, height, floor_ratio=0.35):
     """
-    Generate a dungeon using the drunkard's walk algorithm.
+    Generates a 2D dungeon map using the drunkard's walk algorithm.
+    
+    The dungeon is represented as a grid of walls ('#') and floors ('.'), with the proportion of floor tiles determined by the specified floor_ratio. The algorithm starts from a random position inside the dungeon and carves out floor tiles by randomly walking until the target number of floor tiles is reached. All outer edges are guaranteed to remain walls.
     
     Args:
-        width (int): Width of the dungeon
-        height (int): Height of the dungeon
-        floor_ratio (float): Percentage of the dungeon that should be floor (0.0 to 1.0)
-        
+        width: The horizontal size of the dungeon grid.
+        height: The vertical size of the dungeon grid.
+        floor_ratio: The fraction of tiles to be converted to floor, between 0.0 and 1.0.
+    
     Returns:
-        list: 2D list representing the dungeon, where '#' is a wall and '.' is a floor
+        A 2D list of characters representing the dungeon layout, where '#' denotes a wall and '.' denotes a floor.
     """
     # Initialize dungeon with walls
     dungeon = [["#" for _ in range(width)] for _ in range(height)]

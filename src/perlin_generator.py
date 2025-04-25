@@ -4,17 +4,19 @@ from perlin_noise import PerlinNoise
 
 def generate_perlin_dungeon(width, height, scale=15, octaves=4, threshold=0.5):
     """
-    Generate a dungeon using Perlin noise.
-
+    Generates a 2D dungeon map using Perlin noise for natural-looking layouts.
+    
+    The dungeon is represented as a 2D list of characters, where '#' denotes walls and '.' denotes floors. Perlin noise is layered with multiple octaves and normalized to ensure consistent thresholding. The threshold parameter determines the cutoff above which tiles become floors. Borders are always set as walls.
+    
     Args:
-        width (int): Width of the dungeon
-        height (int): Height of the dungeon
-        scale (float): Scale of the noise (higher = more zoomed out)
-        octaves (int): Number of octaves for the noise (more = more detail)
-        threshold (float): Value above which tiles are floors (0.0 to 1.0)
-
+        width: Number of columns in the dungeon grid.
+        height: Number of rows in the dungeon grid.
+        scale: Controls the zoom level of the noise pattern; higher values produce larger features.
+        octaves: Number of noise layers combined to add detail.
+        threshold: Normalized noise value above which tiles are set as floors (range 0.0 to 1.0).
+    
     Returns:
-        list: 2D list representing the dungeon, where '#' is a wall and '.' is a floor
+        A 2D list of strings representing the dungeon layout, with '#' for walls and '.' for floors.
     """
     # Initialize the dungeon with walls
     dungeon = [['#' for _ in range(width)] for _ in range(height)]

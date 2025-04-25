@@ -23,6 +23,13 @@ ALGO_INFO = {
 }
 
 def main():
+    """
+    Runs the interactive terminal interface for dungeon generation.
+    
+    Presents a menu for selecting one of six dungeon generation algorithms or exiting.
+    Supports viewing algorithm source code, entering custom parameters, and displays
+    the generated dungeon map alongside an explanation of the selected algorithm.
+    """
     while True:
         term_width, _ = shutil.get_terminal_size()
         divider = "─" * term_width
@@ -130,7 +137,13 @@ def main():
         print_dungeon_with_info(dungeon, ALGO_INFO.get(algo_name, "Neznámý algoritmus\nBez popisu"))
 
 def print_dungeon_with_info(dungeon, info):
-    """ Zobrazí dungeon vlevo a vysvětlení vpravo. """
+    """
+    Displays the dungeon map on the left and the algorithm explanation on the right.
+    
+    Args:
+        dungeon: A 2D iterable representing the dungeon layout, where each row is a sequence of characters.
+        info: A string containing the algorithm explanation, split into lines for side-by-side display.
+    """
     term_width, _ = shutil.get_terminal_size()
     split_pos = max(30, term_width // 2)  # Kde se oddělí dungeon a text
 
