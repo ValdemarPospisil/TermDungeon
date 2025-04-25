@@ -8,16 +8,45 @@ from perlin_generator import generate_perlin_dungeon
 
 # Slovník s vysvětlením algoritmů
 ALGO_INFO = {
-    "BSP": "Binary Space Partitioning: Dělí prostor na menší oblasti\n"
-           "a vytváří místnosti a chodby mezi nimi.",
-    "Cellular Automata": "Simulace jeskyně: Každý bod se mění podle\n"
-                         "okolních bodů, čímž vzniká organická struktura.",
-    "Drunkard's Walk": "Náhodná procházka: Postava náhodně chodí po mapě\n"
-                       "a postupně vytváří cesty a místnosti.",
-    "Wave Function Collapse": "Složitý algoritmus, který používá vzory\n"
-                              "k generování souvislých map.",
-    "Perlin Noise": "Použití šumu pro vytvoření přirozeně vypadající krajiny\n"
-                    "nebo dungeonů s hladkými přechody."
+    "BSP": "Binary Space Partitioning:\n"
+           "Rekurzivně dělí prostor na menší oblasti a vytváří v nich\n"
+           "místnosti. Následně generuje chodby mezi nimi.\n\n"
+           "Výhody: Strukturované dungeony s jasnými místnostmi a chodbami.\n"
+           "Nevýhody: Může působit uměle a příliš pravidelně.\n\n"
+           "Použití: Typické pro klasické RPG dungeony, podzemní komplexy\n"
+           "nebo budovy. Ideální pro roguelike hry jako NetHack nebo Angband.",
+           
+    "Cellular Automata": "Buněčný automat simulující tvorbu jeskyní:\n"
+                         "Začíná s náhodným šumem a opakovaně aplikuje pravidla\n"
+                         "podobná Conway's Game of Life pro vytvoření organických struktur.\n\n"
+                         "Výhody: Velmi přirozené, organické jeskyně s plynulými tvary.\n"
+                         "Nevýhody: Obtížná kontrola výsledku, může vytvářet izolované oblasti.\n\n"
+                         "Použití: Přírodní jeskyně, podzemní komplexy, lávové tunely.\n"
+                         "Populární v hrách jako Dwarf Fortress nebo Minecraft.",
+                         
+    "Drunkard's Walk": "Algoritmus náhodné procházky (opilcův krok):\n"
+                       "Virtuální 'opilec' se náhodně pohybuje po mapě a všude,\n"
+                       "kam vstoupí, vytvoří průchozí cestu nebo místnost.\n\n"
+                       "Výhody: Jednoduchý na implementaci, vytváří nepředvídatelné vzory.\n"
+                       "Nevýhody: Méně kontroly nad strukturou, může být neefektivní.\n\n"
+                       "Použití: Organické jeskyně, bludiště, chaotické struktury.\n"
+                       "Často k vidění v hrách jako The Binding of Isaac nebo Enter the Gungeon.",
+                       
+    "Wave Function Collapse": "Komplexní algoritmus založený na lokálních vzorech:\n"
+                              "Začíná s neurčitým stavem a postupně 'kolabuje' možnosti\n"
+                              "podle předem definovaných pravidel, podobně jako kvantová mechanika.\n\n"
+                              "Výhody: Generuje velmi komplexní, souvislé a koherentní struktury.\n"
+                              "Nevýhody: Složitá implementace, potřeba definovat vzory předem.\n\n"
+                              "Použití: Komplexní a detailní světy, města nebo oblasti s jasnými pravidly.\n"
+                              "Používán v Bad North, Caves of Qud a experimentálních projektech.",
+                              
+    "Perlin Noise": "Algoritmus využívající gradientní šum pro generování terénu:\n"
+                    "Vytváří plynulý, přirozeně vypadající šum který se převádí na herní prvky.\n"
+                    "Hodnoty šumu nad určitou hranicí jsou podlahy, pod ní zdi.\n\n"
+                    "Výhody: Hladké přechody, přirozený vzhled, předvídatelná spojitost.\n"
+                    "Nevýhody: Bez dalších úprav nevytváří jasné místnosti nebo chodby.\n\n"
+                    "Použití: Terénní mapy, jeskynní systémy, ostrovy, biomové přechody.\n"
+                    "Používán v Minecraft, No Man's Sky, mnoha procedurálních hrách."
 }
 
 def main():
@@ -69,17 +98,28 @@ def main():
                 # Process params as needed
                 dungeon = generate_cellular_automata_dungeon(width, height, *map(int, params.split(',')))
             elif algo_num == "3":
-                params = input("Zadejte specifické parametry pro Drunkard's Walk (např. steps,drunkards): ").strip()
+                params = input("Zadejte specifické parametry pro Drunkard's Walk (např. floor_ratio): ").strip()
                 # Process params as needed
-                dungeon = generate_drunkards_dungeon(width, height, *map(int, params.split(',')))
+                params_float = float(params) if params else 0.35
+                dungeon = generate_drunkards_dungeon(width, height, params_float)
             elif algo_num == "4":
                 params = input("Zadejte specifické parametry pro Wave Function Collapse: ").strip()
                 # Process params as needed
                 dungeon = generate_wfc_dungeon(width, height, *map(int, params.split(',')))
             elif algo_num == "5":
-                params = input("Zadejte specifické parametry pro Perlin Noise: ").strip()
-                # Process params as needed
-                dungeon = generate_perlin_dungeon(width, height, *map(int, params.split(',')))
+                params = input("Zadejte specifické parametry pro Perlin Noise (např. scale,octaves,threshold): ").strip()
+                if params:
+                    param_list = params.split(',')
+                    if len(param_list) == 3:
+                        scale = float(param_list[0])
+                        octaves = int(param_list[1])
+                        threshold = float(param_list[2])
+                        dungeon = generate_perlin_dungeon(width, height, scale, octaves, threshold)
+                    else:
+                        print("Neplatné parametry! Použití výchozích hodnot.")
+                        dungeon = generate_perlin_dungeon(width, height)
+                else:
+                    dungeon = generate_perlin_dungeon(width, height)
             else:
                 print("Neplatná volba, zkus to znovu.")
             continue
@@ -114,10 +154,11 @@ def print_dungeon_with_info(dungeon, info):
     term_width, _ = shutil.get_terminal_size()
     split_pos = max(30, term_width // 2)  # Kde se oddělí dungeon a text
 
+    info_lines = info.split("\n")
     for i, row in enumerate(dungeon):
         row_str = "".join(row)
-        if i < len(info.split("\n")):
-            info_line = info.split("\n")[i]
+        if i < len(info_lines):
+            info_line = info_lines[i]
         else:
             info_line = ""
         print(f"{row_str.ljust(split_pos)} {info_line}")
