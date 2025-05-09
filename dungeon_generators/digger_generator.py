@@ -1,6 +1,38 @@
-import random
+"""
+Digger Dungeon Generator
+------------------------
 
-def generate_digger_dungeon(width, height, num_diggers=3, dig_length=100):
+Tento modul implementuje generování dungeonů metodou "digger", kdy virtuální
+"kopáči" vyrývají chodby a místnosti do mapy plné zdí.
+
+Základní princip:
+1. Začneme s mapou plnou zdí
+2. Vytvoříme centrální místnost
+3. Z této místnosti vypustíme několik "kopáčů"
+4. Každý kopáč náhodně vyhloubí tunely a občas vytvoří místnost
+5. Výsledkem je síť tunelů a místností vycházejících z centrální místnosti
+
+Výhodou této metody je, že vytváří propojené tunely, které připomínají
+důlní komplexy nebo jeskynní systémy.
+"""
+
+import random
+from typing import List, Tuple
+
+
+def generate_digger_dungeon(width: int, height: int, num_diggers: int = 3, dig_length: int = 100) -> List[List[str]]:
+    """
+    Generuje dungeon pomocí algoritmu digger, který simuluje "kopáče" vyrývající chodby.
+    
+    Args:
+        width (int): Šířka dungeonu
+        height (int): Výška dungeonu
+        num_diggers (int): Počet kopáčů, kteří budou vytvářet tunely
+        dig_length (int): Délka tunelů, které každý kopáč vytvoří
+    
+    Returns:
+        List[List[str]]: 2D mapa dungeonu, kde '#' představuje stěnu a '.' podlahu
+    """
     # Nejprve vytvoříme mapu plnou zdí
     dungeon = [["#" for _ in range(width)] for _ in range(height)]
     
@@ -62,3 +94,10 @@ def generate_digger_dungeon(width, height, num_diggers=3, dig_length=100):
                             dungeon[room_y][room_x] = "."
     
     return dungeon
+
+
+if __name__ == "__main__":
+    # Jednoduché testování
+    dungeon = generate_digger_dungeon(60, 30)
+    for row in dungeon:
+        print(''.join(row))

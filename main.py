@@ -17,6 +17,7 @@ from dungeon_generators.cellular_automata import generate_cellular_automata_dung
 from dungeon_generators.drunkards_walk import generate_drunkards_dungeon
 from dungeon_generators.wave_function_collapse import generate_wfc_dungeon
 from dungeon_generators.perlin_generator import generate_perlin_dungeon
+from dungeon_generators.digger_generator import generate_digger_dungeon
 
 # Konstanty
 DEFAULT_WIDTH = 75
@@ -133,7 +134,30 @@ Nevýhody:
 Využití:
 - Krajiny a venkovní prostředí
 - Jeskynní systémy
-- Podzemní labyrinty s přirozenými prvky"""
+- Podzemní labyrinty s přirozenými prvky""",
+
+    "Digger Tunnels": """Digger Tunnels
+----------
+Jak funguje:
+- Začíná s centrální místností
+- Vytváří několik "kopáčů", kteří se náhodně pohybují
+- Každý kopáč postupně vytváří chodby a občas místnosti
+- Výsledkem je síť propojených tunelů
+
+Výhody:
+- Vytváří strukturované tunely s občasnými místnostmi
+- Vždy začíná s přístupnou centrální místností
+- Tunely jsou přirozeně propojené
+
+Nevýhody:
+- Může vytvářet příliš klikaté chodby
+- Méně kontroly nad umístěním místností
+- Občas může vznikat příliš hustá síť chodeb
+
+Využití:
+- Důlní komplexy
+- Jeskynní systémy
+- Systémy podzemních tunelů"""
 }
 
 def main() -> None:
@@ -150,10 +174,11 @@ def main() -> None:
         print("║ 3) Drunkard's Walk".ljust(term_width - 2) + "║")
         print("║ 4) Wave Function Collapse".ljust(term_width - 2) + "║")
         print("║ 5) Perlin Noise".ljust(term_width - 2) + "║")
-        print("║ 6) Exit".ljust(term_width - 2) + "║")
+        print("║ 6) Digger Tunnels".ljust(term_width - 2) + "║")
+        print("║ 7) Exit".ljust(term_width - 2) + "║")
         print("╚" + "═" * (term_width - 2) + "╝")
 
-        prompt = "Vyber algoritmus (1-6), 'číslo_i' pro info, 'číslo_s' pro zdrojový kód, 'číslo_p' pro parametry: "
+        prompt = "Vyber algoritmus (1-7), 'číslo_i' pro info, 'číslo_s' pro zdrojový kód, 'číslo_p' pro parametry: "
         choice = input(prompt).strip()
         
         # Defaultní rozměry dungeonu
@@ -163,7 +188,7 @@ def main() -> None:
         # Zpracování informací o algoritmu
         if choice.endswith('i'):
             algo_num = choice[:-1]
-            if algo_num in ["1", "2", "3", "4", "5"]:
+            if algo_num in ["1", "2", "3", "4", "5", "6"]:
                 algo_name = get_algo_name(algo_num)
                 show_algorithm_info(algo_name)
             else:
@@ -179,7 +204,7 @@ def main() -> None:
         # Zadání specifických parametrů
         elif choice.endswith('p'):
             algo_num = choice[:-1]
-            if algo_num in ["1", "2", "3", "4", "5"]:
+            if algo_num in ["1", "2", "3", "4", "5", "6"]:
                 algo_name = get_algo_name(algo_num)
                 dungeon = generate_with_params(algo_num, width, height)
                 if dungeon:
@@ -189,7 +214,7 @@ def main() -> None:
             continue
             
         # Generování dungeonu s výchozími parametry
-        elif choice in ["1", "2", "3", "4", "5"]:
+        elif choice in ["1", "2", "3", "4", "5", "6"]:
             algo_name = get_algo_name(choice)
             try:
                 dungeon = generate_dungeon(choice, width, height)
@@ -199,7 +224,7 @@ def main() -> None:
                 print(f"Chyba při generování dungeonu: {e}")
                 
         # Ukončení programu
-        elif choice == "6":
+        elif choice == "7":
             print("Ukončuji program. Na shledanou!")
             sys.exit(0)
             
@@ -215,7 +240,8 @@ def get_algo_name(choice: str) -> str:
         "2": "Cellular Automata", 
         "3": "Drunkard's Walk",
         "4": "Wave Function Collapse",
-        "5": "Perlin Noise"
+        "5": "Perlin Noise",
+        "6": "Digger Tunnels"
     }
     return algorithms.get(choice, "")
 
@@ -239,7 +265,8 @@ def show_source_code(algo_num: str) -> None:
         "2": "dungeon_generators/cellular_automata.py",
         "3": "dungeon_generators/drunkards_walk.py",
         "4": "dungeon_generators/wave_function_collapse.py",
-        "5": "dungeon_generators/perlin_generator.py"
+        "5": "dungeon_generators/perlin_generator.py",
+        "6": "dungeon_generators/digger_generator.py",
     }
     
     if algo_num in file_paths:
@@ -263,7 +290,7 @@ def generate_with_params(algo_num: str, width: int, height: int) -> List[List[st
         "1": (generate_bsp_dungeon, "BSP", ["max_depth (int): Maximální hloubka dělení"]),
         "2": (generate_cellular_automata_dungeon, "Cellular Automata", 
               ["iterations (int): Počet iterací", "wall_prob (float): Pravděpodobnost zdi"]),
-        "3": (generate_drunkards_walk, "Drunkard's Walk", 
+        "3": (generate_drunkards_dungeon, "Drunkard's Walk", 
               ["floor_ratio (float): Poměr podlahy k celkové ploše"]),
         "4": (generate_wfc_dungeon, "Wave Function Collapse", 
               ["room_attempts (int): Počet pokusů o místnost", 
@@ -271,7 +298,9 @@ def generate_with_params(algo_num: str, width: int, height: int) -> List[List[st
                "room_max_size (int): Maximální velikost místnosti"]),
         "5": (generate_perlin_dungeon, "Perlin Noise", 
               ["scale (float): Měřítko šumu", "octaves (int): Počet oktáv", 
-               "threshold (float): Práh pro generování zdí"])
+               "threshold (float): Práh pro generování zdí"]),
+        "6": (generate_digger_dungeon, "Digger Tunnels",
+              ["num_diggers (int): Počet kopáčů", "dig_length (int): Délka kopání"])
     }
     
     if algo_num in generators:
@@ -310,9 +339,10 @@ def generate_dungeon(choice: str, width: int, height: int) -> List[List[str]]:
     generators = {
         "1": generate_bsp_dungeon,
         "2": generate_cellular_automata_dungeon,
-        "3": generate_drunkards_walk,
+        "3": generate_drunkards_dungeon,
         "4": generate_wfc_dungeon,
-        "5": generate_perlin_dungeon
+        "5": generate_perlin_dungeon,
+        "6": generate_digger_dungeon
     }
     
     generator = generators.get(choice)

@@ -1,7 +1,39 @@
+"""
+Wave Function Collapse Dungeon Generator
+---------------------------------------
+
+Tento modul implementuje zjednodušenou verzi algoritmu Wave Function Collapse (WFC)
+pro generování dungeonů. WFC je algoritmus inspirovaný kvantovou mechanikou,
+který vytváří struktury na základě lokálních omezení a vzorů.
+
+V této implementaci používáme zjednodušený přístup, kdy:
+1. Náhodně generujeme místnosti
+2. Propojujeme je chodbami
+3. Zajišťujeme, aby všechny místnosti byly dosažitelné
+
+WFC algoritmus je obecně složitější, ale tato zjednodušená verze
+demonstruje základní princip jeho fungování pro generování dungeonů.
+"""
+
 import random
+from typing import List, Tuple
 
 
-def generate_wfc_dungeon(width, height, room_attempts=15, room_min_size=5, room_max_size=10):
+def generate_wfc_dungeon(width: int, height: int, room_attempts: int = 15, 
+                        room_min_size: int = 5, room_max_size: int = 10) -> List[List[str]]:
+    """
+    Generuje dungeon pomocí zjednodušené verze algoritmu Wave Function Collapse.
+    
+    Args:
+        width (int): Šířka dungeonu
+        height (int): Výška dungeonu
+        room_attempts (int): Počet pokusů o vytvoření místnosti
+        room_min_size (int): Minimální velikost místnosti
+        room_max_size (int): Maximální velikost místnosti
+    
+    Returns:
+        List[List[str]]: 2D mapa dungeonu, kde '#' představuje stěnu a '.' podlahu
+    """
     # Vytvoříme základní mapu plnou zdí
     dungeon = [["#" for _ in range(width)] for _ in range(height)]
     rooms = []
@@ -39,13 +71,37 @@ def generate_wfc_dungeon(width, height, room_attempts=15, room_min_size=5, room_
 
     return dungeon
 
-def connect_horizontal(dungeon, x1, x2, y):
-    """ Vytvoří vodorovnou chodbu mezi x1 a x2 na řádku y """
+
+def connect_horizontal(dungeon: List[List[str]], x1: int, x2: int, y: int) -> None:
+    """
+    Vytvoří vodorovnou chodbu mezi x1 a x2 na řádku y.
+    
+    Args:
+        dungeon (List[List[str]]): Mapa dungeonu
+        x1 (int): Počáteční X souřadnice
+        x2 (int): Koncová X souřadnice
+        y (int): Y souřadnice řádku
+    """
     for x in range(min(x1, x2), max(x1, x2) + 1):
         dungeon[y][x] = "." 
 
-def connect_vertical(dungeon, y1, y2, x):
-    """ Vytvoří svislou chodbu mezi y1 a y2 ve sloupci x """
+
+def connect_vertical(dungeon: List[List[str]], y1: int, y2: int, x: int) -> None:
+    """
+    Vytvoří svislou chodbu mezi y1 a y2 ve sloupci x.
+    
+    Args:
+        dungeon (List[List[str]]): Mapa dungeonu
+        y1 (int): Počáteční Y souřadnice
+        y2 (int): Koncová Y souřadnice
+        x (int): X souřadnice sloupce
+    """
     for y in range(min(y1, y2), max(y1, y2) + 1):
         dungeon[y][x] = "." 
 
+
+if __name__ == "__main__":
+    # Jednoduché testování
+    dungeon = generate_wfc_dungeon(60, 30)
+    for row in dungeon:
+        print(''.join(row))
