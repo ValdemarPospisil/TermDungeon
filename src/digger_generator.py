@@ -2,6 +2,20 @@ import random
 
 def generate_digger_dungeon(width, height, num_diggers=3, dig_length=100):
     # Nejprve vytvoříme mapu plnou zdí
+    """
+    Generates a dungeon map using a digger algorithm with multiple tunneling agents.
+    
+    The dungeon is represented as a 2D grid of characters, where "#" denotes walls and "." denotes floors. A central room is carved out, and a specified number of diggers start from positions around this room. Each digger creates winding tunnels and occasionally carves out small rooms, resulting in a connected dungeon layout.
+    
+    Args:
+        width: The width of the dungeon grid.
+        height: The height of the dungeon grid.
+        num_diggers: Number of diggers to use (maximum 4).
+        dig_length: Number of steps each digger takes.
+    
+    Returns:
+        A 2D list of characters representing the generated dungeon map.
+    """
     dungeon = [["#" for _ in range(width)] for _ in range(height)]
     
     # Vytvoříme počáteční místnost uprostřed
